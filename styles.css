@@ -129,10 +129,16 @@ html[dir="ltr"] .tile-en { display: none; }
 .m-img .ph-letter { font-family: 'Marcellus', serif; font-size: 56px; color: var(--gold-dark); opacity: .75; }
 .m-img img { width: 100%; height: 100%; object-fit: cover; }
 .m-price { font-size: 20px; font-weight: 800; margin-bottom: 16px; direction: ltr; text-align: start; }
-.power-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.eye-specs { display: flex; flex-direction: column; gap: 14px; margin-bottom: 6px; }
+.eye-block { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px 14px; background: #fbf8f1; }
+.eye-label { font-size: 13.5px; font-weight: 800; margin-bottom: 10px; color: var(--gold-dark); }
+.eye-fields { display: flex; gap: 10px; }
+.eye-fields .power-field { flex: 1; min-width: 0; }
 .power-field { flex: 1; }
 .power-field label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px; color: var(--muted); }
 .power-field select { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px; font-size: 14px; background: var(--card); font-family: inherit; }
+.power-field select.select-error { border-color: #b0392e; outline: 1px solid #b0392e; }
+.power-error { color: #b0392e; font-size: 13px; font-weight: 700; margin: 8px 0 2px; }
 .qty-row { display: flex; align-items: center; gap: 12px; margin: 12px 0 18px; }
 .qty-btn { width: 34px; height: 34px; border: 1px solid var(--border); background: var(--card); border-radius: 8px; font-size: 17px; cursor: pointer; }
 .btn-add { width: 100%; background: var(--ink); color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
@@ -192,4 +198,4 @@ html[dir="rtl"] .cart-drawer { box-shadow: 4px 0 24px rgba(22,19,14,.2); }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .topbar-perks { display: none; }
   .about { flex-direction: column; text-align: center; }
-                }
+}
