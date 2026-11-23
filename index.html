@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ناسيمي | Nasimi - عدسات لاصقة</title>
+<meta name="description" content="ناسيمي - عدسات لاصقة ملونة وطبية ومحاليل في مصر | Nasimi - colored and clear contact lenses in Egypt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <span class="logo-ar">ناسيمي</span>
+      <span class="logo-en">NASIMI</span>
+    </div>
+    <div class="header-actions">
+      <button id="lang-toggle" class="btn-ghost" type="button">English</button>
+      <button id="cart-button" class="btn-cart" type="button" aria-label="cart">
+        🛒 <span id="cart-count" class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1 data-i18n="heroTitle"></h1>
+    <p data-i18n="heroSub"></p>
+  </div>
+</section>
+
+<main class="container">
+  <nav class="cat-tabs" id="cat-tabs"></nav>
+  <div class="filters">
+    <input id="search" type="search" data-i18n-ph="searchPh" class="search-input">
+    <select id="brand-filter" class="brand-select"></select>
+    <div id="color-chips" class="chips"></div>
+    <div id="duration-chips" class="chips"></div>
+  </div>
+  <p id="result-count" class="result-count"></p>
+  <div id="product-grid" class="product-grid"></div>
+</main>
+
+<div id="modal-backdrop" class="modal-backdrop hidden">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button id="modal-close" class="modal-close" type="button">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<aside id="cart-drawer" class="cart-drawer hidden" aria-label="cart">
+  <div class="cart-header">
+    <h2 data-i18n="cartTitle"></h2>
+    <button id="cart-close" class="modal-close" type="button">✕</button>
+  </div>
+  <div id="cart-items" class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span data-i18n="total"></span> <strong id="cart-total"></strong></div>
+    <p class="cart-note" data-i18n="cartNote"></p>
+    <button id="checkout-wa" class="btn-wa" type="button"></button>
+  </div>
+</aside>
+
+<footer class="site-footer">
+  <div class="container">
+    <p><strong>ناسيمي | Nasimi</strong></p>
+    <p data-i18n="footerTag"></p>
+    <p><a id="footer-wa" href="#" target="_blank" rel="noopener" class="footer-wa"></a></p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
