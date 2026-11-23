@@ -57,7 +57,7 @@ a { color: inherit; text-decoration: none; }
 .hero-copy p { font-size: 17px; color: var(--muted); margin-bottom: 26px; }
 .btn-dark { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; border: none; border-radius: 30px; padding: 13px 34px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
 .btn-dark:hover { background: #000; }
-.hero-monogram { width: 300px; opacity: .5; filter: sepia(.2); }
+.hero-monogram { width: 300px; opacity: .5; }
 
 /* Category tiles */
 .cat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: -28px; position: relative; z-index: 5; padding-bottom: 8px; }
@@ -192,4 +192,4 @@ html[dir="rtl"] .cart-drawer { box-shadow: 4px 0 24px rgba(22,19,14,.2); }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .topbar-perks { display: none; }
   .about { flex-direction: column; text-align: center; }
-          }
+                }
