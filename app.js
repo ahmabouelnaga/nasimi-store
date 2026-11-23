@@ -40,6 +40,11 @@
       checkout: 'إتمام الطلب عبر واتساب',
       powerR: 'عدسة العين اليمنى',
       powerL: 'عدسة العين اليسرى',
+      sph: 'القياس (SPH)',
+      cyl: 'الأسطوانة (CYL)',
+      ax: 'المحور (AX)',
+      choose: 'اختر',
+      choosePowerError: 'من فضلك اختر القياس لكل عين قبل الإضافة إلى السلة',
       plano: 'بدون قياس (0.00)',
       qty: 'الكمية',
       trust1: 'منتجات أصلية 100%',
@@ -107,6 +112,11 @@
       checkout: 'Checkout via WhatsApp',
       powerR: 'Right eye lens',
       powerL: 'Left eye lens',
+      sph: 'Power (SPH)',
+      cyl: 'Cylinder (CYL)',
+      ax: 'Axis (AX)',
+      choose: 'Select',
+      choosePowerError: 'Please choose a power for each eye before adding to cart',
       plano: 'Plano (0.00)',
       qty: 'Qty',
       trust1: '100% Original Products',
@@ -148,16 +158,35 @@
     color: 'all',
     duration: 'all',
     search: '',
-    cart: JSON.parse(localStorage.getItem('nasimi_cart') || '[]')
+    cart: migrateCart(JSON.parse(localStorage.getItem('nasimi_cart') || '[]'))
   };
 
+  function migrateCart(items) {
+    return items.map(function (i) {
+      if (i.specs === undefined) {
+        i.specs = i.powerR ? { R: { sph: i.powerR }, L: { sph: i.powerL || i.powerR } } : null;
+        delete i.powerR; delete i.powerL;
+      }
+      return i;
+    });
+  }
+
   function t(key) { return (I18N[state.lang] && I18N[state.lang][key]) || I18N.en[key] || key; }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
 
   function fmtPrice(p) {
     var n = Number(p);
     if (!isFinite(n)) return '';
     return (n % 1 === 0 ? n.toLocaleString('en-US') : n.toFixed(2)) + ' ' + t('egp');
   }
+
+  function isToric(p) { return /toric/i.test(p.title); }
 
   function parseCsv(text) {
     var rows = [], row = [], cur = '', inQ = false, i, c;
@@ -223,16 +252,49 @@
     return p.category === cat;
   }
 
-  function powerOptions() {
-    var opts = [{ v: '0.00', label: t('plano') }];
-    for (var d = 0.5; d <= 6.001; d += 0.25) opts.push({ v: '+' + d.toFixed(2), label: '+' + d.toFixed(2) });
-    for (var m = 0.5; m <= 10.001; m += 0.25) opts.push({ v: '-' + m.toFixed(2), label: '-' + m.toFixed(2) });
-    return opts;
+  function sphValues() {
+    var vals = ['0.00'];
+    for (var d = 0.5; d <= 6.001; d += 0.25) vals.push('+' + d.toFixed(2));
+    for (var m = 0.5; m <= 10.001; m += 0.25) vals.push('-' + m.toFixed(2));
+    return vals;
+  }
+  function cylValues() { return ['-0.75', '-1.25', '-1.75', '-2.25']; }
+  function axValues() {
+    var vals = [];
+    for (var a = 0; a <= 180; a += 10) vals.push(String(a));
+    return vals;
   }
 
-  function imgHtml(p, cls) {
-    if (p.image) return '<div class="' + cls + '"><img src="' + p.image + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<span class=ph-letter>' + (p.brand[0] || 'N') + '</span>\'"></div>';
-    return '<div class="' + cls + '"><span class="ph-letter">' + (p.brand[0] || 'N') + '</span></div>';
+  function powerSelect(kind, values) {
+    var sel = el('select', 'power-select');
+    sel.setAttribute('data-kind', kind);
+    var ph = el('option', '', t('choose'));
+    ph.value = ''; ph.disabled = true; ph.selected = true;
+    sel.appendChild(ph);
+    values.forEach(function (v) {
+      var o = el('option', '', v === '0.00' && kind === 'sph' ? t('plano') : v);
+      o.value = v;
+      sel.appendChild(o);
+    });
+    return sel;
+  }
+
+  function imgEl(p, cls) {
+    var box = el('div', cls);
+    if (p.image) {
+      var img = el('img');
+      img.src = p.image;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.onerror = function () {
+        box.textContent = '';
+        box.appendChild(el('span', 'ph-letter', (p.brand[0] || 'N')));
+      };
+      box.appendChild(img);
+    } else {
+      box.appendChild(el('span', 'ph-letter', (p.brand[0] || 'N')));
+    }
+    return box;
   }
 
   function filtered() {
@@ -250,15 +312,13 @@
 
   var TABS = ['all', 'Colored Lenses', 'Clear Lenses', 'solutions', 'accessories'];
   function renderTabs() {
-    var el = document.getElementById('cat-tabs');
-    el.innerHTML = '';
+    var wrap = document.getElementById('cat-tabs');
+    wrap.textContent = '';
     TABS.forEach(function (c) {
-      var b = document.createElement('button');
+      var b = el('button', 'cat-tab' + (state.category === c ? ' active' : ''), c === 'all' ? t('allCats') : t(c));
       b.type = 'button';
-      b.className = 'cat-tab' + (state.category === c ? ' active' : '');
-      b.textContent = c === 'all' ? t('allCats') : t(c);
       b.onclick = function () { setCategory(c); };
-      el.appendChild(b);
+      wrap.appendChild(b);
     });
     document.querySelectorAll('.main-nav a[data-cat]').forEach(function (a) {
       a.classList.toggle('active', a.getAttribute('data-cat') === state.category);
@@ -278,13 +338,20 @@
       if (p.stock && inCategory(p, state.category) && brands.indexOf(p.brand) < 0) brands.push(p.brand);
     });
     brands.sort();
-    sel.innerHTML = '<option value="all">' + t('allBrands') + '</option>' + brands.map(function (b) {
-      return '<option value="' + b + '"' + (state.brand === b ? ' selected' : '') + '>' + b + '</option>';
-    }).join('');
+    sel.textContent = '';
+    var all = el('option', '', t('allBrands'));
+    all.value = 'all';
+    sel.appendChild(all);
+    brands.forEach(function (b) {
+      var o = el('option', '', b);
+      o.value = b;
+      if (state.brand === b) o.selected = true;
+      sel.appendChild(o);
+    });
 
     var showColors = state.category === 'all' || state.category === 'lenses' || state.category === 'Colored Lenses';
     var cc = document.getElementById('color-chips');
-    cc.innerHTML = '';
+    cc.textContent = '';
     if (showColors) {
       var avail = {};
       state.products.forEach(function (p) {
@@ -292,59 +359,56 @@
       });
       t('colors').forEach(function (c) {
         if (!avail[c]) return;
-        var b = document.createElement('button');
+        var b = el('button', 'chip' + (state.color === c ? ' active' : ''), t('colorNames')[c] || c);
         b.type = 'button';
-        b.className = 'chip' + (state.color === c ? ' active' : '');
-        b.textContent = t('colorNames')[c] || c;
         b.onclick = function () { state.color = state.color === c ? 'all' : c; renderAll(); };
         cc.appendChild(b);
       });
     }
     var dc = document.getElementById('duration-chips');
-    dc.innerHTML = '';
+    dc.textContent = '';
     if (state.category !== 'solutions' && state.category !== 'accessories' && state.category !== 'Solutions & Accessories') {
       t('durations').forEach(function (d) {
-        var b = document.createElement('button');
+        var b = el('button', 'chip' + (state.duration === d ? ' active' : ''), t('durationNames')[d] || d);
         b.type = 'button';
-        b.className = 'chip' + (state.duration === d ? ' active' : '');
-        b.textContent = t('durationNames')[d] || d;
         b.onclick = function () { state.duration = state.duration === d ? 'all' : d; renderAll(); };
         dc.appendChild(b);
       });
     }
   }
 
-  function cardHtml(p, badge) {
-    return (badge ? '<span class="p-badge">' + t('bestBadge') + '</span>' : '') +
-      imgHtml(p, 'product-img') +
-      '<div class="product-info"><div class="product-brand">' + p.brand + '</div>' +
-      '<div class="product-title">' + p.title + '</div>' +
-      '<div class="product-price">' + fmtPrice(p.price) + '</div>' +
-      '<button class="card-add" type="button"><svg viewBox="0 0 24 24" class="ic"><path fill="none" stroke="currentColor" stroke-width="2" d="M6 6h15l-1.7 8.5a2 2 0 0 1-2 1.5H9.7a2 2 0 0 1-2-1.6L5.2 3.9A1 1 0 0 0 4.2 3H2"/><circle cx="9.5" cy="20" r="1.6" fill="currentColor"/><circle cx="17.5" cy="20" r="1.6" fill="currentColor"/></svg>' + t('addToCart') + '</button></div>';
-  }
+  var CART_ICON_SVG = '<svg viewBox="0 0 24 24" class="ic"><path fill="none" stroke="currentColor" stroke-width="2" d="M6 6h15l-1.7 8.5a2 2 0 0 1-2 1.5H9.7a2 2 0 0 1-2-1.6L5.2 3.9A1 1 0 0 0 4.2 3H2"/><circle cx="9.5" cy="20" r="1.6" fill="currentColor"/><circle cx="17.5" cy="20" r="1.6" fill="currentColor"/></svg>';
 
-  function bindCard(card, p) {
+  function cardEl(p, badge) {
+    var card = el('div', 'product-card');
+    if (badge) card.appendChild(el('span', 'p-badge', t('bestBadge')));
+    card.appendChild(imgEl(p, 'product-img'));
+    var info = el('div', 'product-info');
+    info.appendChild(el('div', 'product-brand', p.brand));
+    info.appendChild(el('div', 'product-title', p.title));
+    info.appendChild(el('div', 'product-price', fmtPrice(p.price)));
+    var btn = el('button', 'card-add');
+    btn.type = 'button';
+    btn.innerHTML = CART_ICON_SVG;
+    btn.appendChild(document.createTextNode(t('addToCart')));
+    info.appendChild(btn);
+    card.appendChild(info);
     card.onclick = function () { openModal(p); };
+    return card;
   }
 
   function renderGrid() {
     var list = filtered();
     document.getElementById('result-count').textContent = list.length + ' ' + t('results');
     var grid = document.getElementById('product-grid');
-    grid.innerHTML = '';
-    list.forEach(function (p) {
-      var card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = cardHtml(p, false);
-      bindCard(card, p);
-      grid.appendChild(card);
-    });
+    grid.textContent = '';
+    list.forEach(function (p) { grid.appendChild(cardEl(p, false)); });
   }
 
   var BEST_TITLES = ['1-DAY ACUVUE OASYS', 'Acuvue Oasys', 'Acuvue Moist', 'Acuvue Oasys Toric'];
   function renderBest() {
     var grid = document.getElementById('best-grid');
-    grid.innerHTML = '';
+    grid.textContent = '';
     var picks = [];
     BEST_TITLES.forEach(function (title) {
       var p = state.products.filter(function (x) { return x.title === title && x.stock; })[0];
@@ -354,46 +418,92 @@
       if (picks.length >= 4) return;
       if (p.stock && p.category === 'Colored Lenses' && (p.brand === 'Bella' || p.brand === 'Desio') && picks.indexOf(p) < 0) picks.push(p);
     });
-    picks.slice(0, 4).forEach(function (p) {
-      var card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = cardHtml(p, true);
-      bindCard(card, p);
-      grid.appendChild(card);
-    });
+    picks.slice(0, 4).forEach(function (p) { grid.appendChild(cardEl(p, true)); });
+  }
+
+  function eyeSpecBlock(eyeLabel, eyeKey, toric) {
+    var wrap = el('div', 'eye-block');
+    wrap.appendChild(el('div', 'eye-label', eyeLabel));
+    var fields = el('div', 'eye-fields');
+    var sphF = el('div', 'power-field');
+    sphF.appendChild(el('label', '', t('sph')));
+    sphF.appendChild(powerSelect('sph-' + eyeKey, sphValues()));
+    fields.appendChild(sphF);
+    if (toric) {
+      var cylF = el('div', 'power-field');
+      cylF.appendChild(el('label', '', t('cyl')));
+      cylF.appendChild(powerSelect('cyl-' + eyeKey, cylValues()));
+      fields.appendChild(cylF);
+      var axF = el('div', 'power-field');
+      axF.appendChild(el('label', '', t('ax')));
+      axF.appendChild(powerSelect('ax-' + eyeKey, axValues()));
+      fields.appendChild(axF);
+    }
+    wrap.appendChild(fields);
+    return wrap;
   }
 
   var modalProduct = null;
   function openModal(p) {
     modalProduct = p;
+    var toric = isToric(p);
     var body = document.getElementById('modal-body');
-    var optsHtml = powerOptions().map(function (o) { return '<option value="' + o.v + '">' + o.label + '</option>'; }).join('');
-    var powerHtml = '';
-    if (p.power) {
-      powerHtml =
-        '<div class="power-row"><div class="power-field"><label>' + t('powerR') + '</label><select id="power-r">' + optsHtml + '</select></div>' +
-        '<div class="power-field"><label>' + t('powerL') + '</label><select id="power-l">' + optsHtml + '</select></div></div>';
-    }
-    body.innerHTML =
-      '<h3>' + p.title + '</h3><div class="m-brand">' + p.brand + '</div>' +
-      imgHtml(p, 'm-img') +
-      '<div class="m-price">' + fmtPrice(p.price) + '</div>' +
-      powerHtml +
-      '<div class="qty-row"><span>' + t('qty') + '</span>' +
-      '<button class="qty-btn" type="button" id="q-minus">−</button><span id="q-val">1</span>' +
-      '<button class="qty-btn" type="button" id="q-plus">+</button></div>' +
-      '<button class="btn-add" type="button" id="add-btn">' + t('addToCart') + '</button>';
+    body.textContent = '';
+    body.appendChild(el('h3', '', p.title));
+    body.appendChild(el('div', 'm-brand', p.brand));
+    body.appendChild(imgEl(p, 'm-img'));
+    body.appendChild(el('div', 'm-price', fmtPrice(p.price)));
+
+    var err = el('div', 'power-error hidden', t('choosePowerError'));
+    err.id = 'power-error';
 
     var qty = 1;
-    body.querySelector('#q-minus').onclick = function () { qty = Math.max(1, qty - 1); body.querySelector('#q-val').textContent = qty; };
-    body.querySelector('#q-plus').onclick = function () { qty = Math.min(20, qty + 1); body.querySelector('#q-val').textContent = qty; };
-    var pr = body.querySelector('#power-r'), pl = body.querySelector('#power-l');
-    if (pr && pl) pr.onchange = function () { pl.value = pr.value; };
-    body.querySelector('#add-btn').onclick = function () {
-      addToCart(p, qty, pr ? pr.value : '', pl ? pl.value : '');
+    if (p.power) {
+      var specs = el('div', 'eye-specs');
+      specs.appendChild(eyeSpecBlock(t('powerR'), 'r', toric));
+      specs.appendChild(eyeSpecBlock(t('powerL'), 'l', toric));
+      body.appendChild(specs);
+      body.appendChild(err);
+    }
+
+    var qtyRow = el('div', 'qty-row');
+    qtyRow.appendChild(el('span', '', t('qty')));
+    var minus = el('button', 'qty-btn', '−'); minus.type = 'button';
+    var val = el('span', '', '1'); val.id = 'q-val';
+    var plus = el('button', 'qty-btn', '+'); plus.type = 'button';
+    minus.onclick = function () { qty = Math.max(1, qty - 1); val.textContent = qty; };
+    plus.onclick = function () { qty = Math.min(20, qty + 1); val.textContent = qty; };
+    qtyRow.appendChild(minus); qtyRow.appendChild(val); qtyRow.appendChild(plus);
+    body.appendChild(qtyRow);
+
+    var add = el('button', 'btn-add', t('addToCart'));
+    add.type = 'button';
+    add.id = 'add-btn';
+    add.onclick = function () {
+      var specs = null;
+      if (p.power) {
+        specs = {};
+        var ok = true;
+        ['r', 'l'].forEach(function (eye) {
+          var eyeSpec = {};
+          body.querySelectorAll('select[data-kind$="-' + eye + '"]').forEach(function (sel) {
+            var kind = sel.getAttribute('data-kind').split('-')[0];
+            eyeSpec[kind] = sel.value;
+            if (!sel.value) { ok = false; sel.classList.add('select-error'); }
+            else sel.classList.remove('select-error');
+          });
+          specs[eye.toUpperCase()] = eyeSpec;
+        });
+        if (!ok) {
+          err.classList.remove('hidden');
+          return;
+        }
+      }
+      addToCart(p, qty, specs);
       closeModal();
       openCart();
     };
+    body.appendChild(add);
     document.getElementById('modal-backdrop').classList.remove('hidden');
   }
   function closeModal() { document.getElementById('modal-backdrop').classList.add('hidden'); modalProduct = null; }
@@ -402,39 +512,59 @@
   function cartCount() { return state.cart.reduce(function (s, i) { return s + i.qty; }, 0); }
   function cartTotal() { return state.cart.reduce(function (s, i) { return s + i.qty * (i.price || 0); }, 0); }
 
-  function addToCart(p, qty, pr, pl) {
-    var key = p.id + '|' + pr + '|' + pl;
+  function addToCart(p, qty, specs) {
+    var key = p.id + '|' + JSON.stringify(specs || null);
     var ex = state.cart.filter(function (i) { return i.key === key; })[0];
     if (ex) ex.qty = Math.min(20, ex.qty + qty);
-    else state.cart.push({ key: key, id: p.id, title: p.title, brand: p.brand, price: p.price, qty: qty, powerR: pr, powerL: pl });
+    else state.cart.push({ key: key, id: p.id, title: p.title, brand: p.brand, price: p.price, qty: qty, specs: specs });
     saveCart();
     renderCartCount();
   }
 
   function renderCartCount() { document.getElementById('cart-count').textContent = cartCount(); }
 
+  function fmtEye(spec, labels) {
+    var parts = [];
+    if (spec.sph) parts.push((labels ? 'SPH ' : '') + spec.sph);
+    if (spec.cyl) parts.push('CYL ' + spec.cyl);
+    if (spec.ax !== undefined && spec.ax !== null && spec.ax !== '') parts.push('AX ' + spec.ax);
+    return parts.join(labels ? ', ' : ' / ');
+  }
+
+  function fmtSpecs(i, labels) {
+    if (!i.specs) return '';
+    return t('rightEye') + ': ' + fmtEye(i.specs.R || {}, labels) + ' | ' + t('leftEye') + ': ' + fmtEye(i.specs.L || {}, labels);
+  }
+
   function renderCart() {
-    var el = document.getElementById('cart-items');
+    var wrap = document.getElementById('cart-items');
+    wrap.textContent = '';
     if (!state.cart.length) {
-      el.innerHTML = '<div class="cart-empty">' + t('cartEmpty') + '</div>';
+      wrap.appendChild(el('div', 'cart-empty', t('cartEmpty')));
     } else {
-      el.innerHTML = '';
       state.cart.forEach(function (i, idx) {
-        var div = document.createElement('div');
-        div.className = 'cart-item';
-        var meta = i.brand + (i.powerR ? ' · ' + t('rightEye') + ' ' + i.powerR + ' / ' + t('leftEye') + ' ' + i.powerL : '');
-        div.innerHTML =
-          '<div class="ci-title">' + i.title + '</div>' +
-          '<div class="ci-meta">' + meta + '</div>' +
-          '<div class="ci-row"><div class="ci-qty">' +
-          '<button type="button">−</button><span>' + i.qty + '</span><button type="button">+</button>' +
-          '</div><strong>' + fmtPrice((i.price || 0) * i.qty) + '</strong>' +
-          '<button class="ci-remove" type="button">' + t('remove') + '</button></div>';
-        var btns = div.querySelectorAll('.ci-qty button');
-        btns[0].onclick = function () { i.qty = Math.max(1, i.qty - 1); saveCart(); renderCart(); renderCartCount(); };
-        btns[1].onclick = function () { i.qty = Math.min(20, i.qty + 1); saveCart(); renderCart(); renderCartCount(); };
-        div.querySelector('.ci-remove').onclick = function () { state.cart.splice(idx, 1); saveCart(); renderCart(); renderCartCount(); };
-        el.appendChild(div);
+        var div = el('div', 'cart-item');
+        div.appendChild(el('div', 'ci-title', i.title));
+        var meta = i.brand;
+        var specStr = fmtSpecs(i, false);
+        if (specStr) meta += ' · ' + specStr;
+        div.appendChild(el('div', 'ci-meta', meta));
+        var row = el('div', 'ci-row');
+        var qtyWrap = el('div', 'ci-qty');
+        var minus = el('button', '', '−'); minus.type = 'button';
+        qtyWrap.appendChild(minus);
+        qtyWrap.appendChild(el('span', '', String(i.qty)));
+        var plus = el('button', '', '+'); plus.type = 'button';
+        qtyWrap.appendChild(plus);
+        minus.onclick = function () { i.qty = Math.max(1, i.qty - 1); saveCart(); renderCart(); renderCartCount(); };
+        plus.onclick = function () { i.qty = Math.min(20, i.qty + 1); saveCart(); renderCart(); renderCartCount(); };
+        row.appendChild(qtyWrap);
+        row.appendChild(el('strong', '', fmtPrice((i.price || 0) * i.qty)));
+        var rm = el('button', 'ci-remove', t('remove')); rm.type = 'button';
+        rm.onclick = function () { state.cart.splice(idx, 1); saveCart(); renderCart(); renderCartCount(); };
+        row.appendChild(rm);
+        div.appendChild(row);
+        wrap.appendChild(div);
       });
     }
     document.getElementById('cart-total').textContent = fmtPrice(cartTotal());
@@ -449,7 +579,7 @@
     var lines = [L.orderIntro, ''];
     state.cart.forEach(function (i, n) {
       var line = (n + 1) + ') ' + i.title;
-      if (i.powerR) line += ' | ' + L.rightEye + ': ' + i.powerR + ' / ' + L.leftEye + ': ' + i.powerL;
+      if (i.specs) line += ' | ' + fmtSpecs(i, true);
       line += ' | ' + i.qty + ' x ' + (i.price || 0) + ' = ' + ((i.price || 0) * i.qty) + ' ' + CFG.currency;
       lines.push(line);
     });
@@ -468,8 +598,8 @@
     document.documentElement.lang = state.lang;
     document.documentElement.dir = ar ? 'rtl' : 'ltr';
     document.getElementById('lang-toggle').textContent = ar ? 'English' : 'عربي';
-    document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.getAttribute('data-i18n')); });
-    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+    document.querySelectorAll('[data-i18n]').forEach(function (elm) { elm.textContent = t(elm.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (elm) { elm.placeholder = t(elm.getAttribute('data-i18n-ph')); });
     document.getElementById('checkout-wa').textContent = t('checkout');
     document.title = ar ? 'ناسيمي | NASIMI - عدسات لاصقة' : 'NASIMI | ناسيمي - Contact Lenses';
     localStorage.setItem('nasimi_lang', state.lang);
@@ -516,6 +646,6 @@
     renderBest();
   }).catch(function (err) {
     console.error(err);
-    document.getElementById('product-grid').innerHTML = '<p>Failed to load products.</p>';
+    document.getElementById('product-grid').textContent = 'Failed to load products.';
   });
 })();
