@@ -4,28 +4,59 @@
 
   var I18N = {
     ar: {
-      heroTitle: 'كل العدسات اللي محتاجها',
-      heroSub: 'عدسات لاصقة ملونة وطبية ومحاليل - اطلب بسهولة عبر واتساب',
-      searchPh: 'ابحث عن عدسة أو ماركة...',
+      topbarContact: 'تواصل معنا عبر واتساب:',
+      topbarOriginal: 'منتجات أصلية 100%',
+      topbarDelivery: 'توصيل لجميع المحافظات',
+      navHome: 'الرئيسية',
+      navLenses: 'العدسات اللاصقة',
+      navSolutions: 'محلول العدسات',
+      navAccessories: 'الملحقات',
+      navAbout: 'عن ناسيمي',
+      navContact: 'تواصل معنا',
+      heroTitle: 'رؤيتك أوضح .. كل يوم',
+      heroSub: 'عدسات لاصقة عالية الجودة من أفضل الماركات العالمية',
+      shopNow: 'تسوق الآن',
+      tileLenses: 'العدسات اللاصقة',
+      tileSolutions: 'محلول العدسات',
+      tileAccessories: 'الملحقات',
+      bestTitle: 'أفضل المنتجات',
+      viewAll: 'عرض الكل',
+      bestBadge: 'الأكثر مبيعاً',
+      catalogTitle: 'تصفح المنتجات',
+      searchPh: 'ابحث عن منتج أو ماركة...',
       allCats: 'الكل',
       'Colored Lenses': 'عدسات ملونة',
       'Clear Lenses': 'عدسات طبية',
-      'Solutions & Accessories': 'محاليل وإكسسوارات',
+      solutions: 'محاليل',
+      accessories: 'إكسسوارات',
       allBrands: 'كل الماركات',
       results: 'منتج',
       egp: 'جنيه',
       addToCart: 'أضف إلى السلة',
-      cartTitle: 'سلة المشتريات',
+      cartTitle: 'سلة التسوق',
       cartEmpty: 'السلة فارغة',
       total: 'الإجمالي:',
-      cartNote: 'الدفع والتوصيل يتم الاتفاق عليهما عبر واتساب بعد إرسال الطلب.',
-      checkout: 'أكمل الطلب على واتساب',
+      cartNote: 'سيتم تحويلك إلى واتساب لإرسال الطلب وتأكيده وطريقة الدفع',
+      checkout: 'إتمام الطلب عبر واتساب',
       powerR: 'عدسة العين اليمنى',
       powerL: 'عدسة العين اليسرى',
       plano: 'بدون قياس (0.00)',
       qty: 'الكمية',
-      footerTag: 'عدسات أصلية وتوصيل سريع في مصر',
-      waContact: 'واتساب: +20 15 00059484',
+      trust1: 'منتجات أصلية 100%',
+      trust2: 'دفع آمن عبر واتساب',
+      trust3: 'توصيل سريع لجميع المحافظات',
+      trust4: 'خدمة عملاء متميزة',
+      aboutTitle: 'عن ناسيمي',
+      aboutText: 'ناسيمي وجهتك الأولى للعدسات اللاصقة الأصلية في مصر. نختار لك أفضل الماركات العالمية من العدسات الملونة والطبية والمحاليل، ونوصلها لباب بيتك في أي محافظة. لأن عينيك تستحق الأفضل.',
+      footerQuick: 'روابط سريعة',
+      footerService: 'خدمة العملاء',
+      footerContact: 'تواصل معنا',
+      footerHours: 'من 9 ص إلى 12 م',
+      privacy: 'سياسة الخصوصية',
+      returns: 'سياسة الاسترجاع',
+      shipping: 'الشحن والتوصيل',
+      rights: 'Nasimi. All rights reserved.',
+      footerTag: 'ناسيمي - لأن عينيك تستحق الأفضل',
       remove: 'حذف',
       colors: ['Blue','Green','Grey','Hazel','Brown','Honey','Olive','Turquoise','Violet','Pink','Chocolate','Black','Amber','Mint','Sky','Ice','Gold','Purple'],
       colorNames: {Blue:'أزرق',Green:'أخضر',Grey:'رمادي',Hazel:'عسلي فاتح',Brown:'بني',Honey:'عسلي',Olive:'زيتوني',Turquoise:'تركواز',Violet:'بنفسجي',Pink:'وردي',Chocolate:'شوكولاتة',Black:'أسود',Amber:'كهرماني',Mint:'نعناعي',Sky:'سماوي',Ice:'أيس',Gold:'ذهبي',Purple:'موف'},
@@ -40,28 +71,59 @@
       leftEye: 'يسار'
     },
     en: {
-      heroTitle: 'All the lenses you need',
-      heroSub: 'Colored and clear contact lenses and solutions - order easily on WhatsApp',
-      searchPh: 'Search for a lens or brand...',
+      topbarContact: 'Contact us on WhatsApp:',
+      topbarOriginal: '100% Original Products',
+      topbarDelivery: 'Delivery to all governorates',
+      navHome: 'Home',
+      navLenses: 'Contact Lenses',
+      navSolutions: 'Lens Solutions',
+      navAccessories: 'Accessories',
+      navAbout: 'About Nasimi',
+      navContact: 'Contact Us',
+      heroTitle: 'Clearer vision .. every day',
+      heroSub: 'High-quality contact lenses from the best international brands',
+      shopNow: 'Shop Now',
+      tileLenses: 'Contact Lenses',
+      tileSolutions: 'Lens Solutions',
+      tileAccessories: 'Accessories',
+      bestTitle: 'Best Sellers',
+      viewAll: 'View All',
+      bestBadge: 'Best Seller',
+      catalogTitle: 'Browse Products',
+      searchPh: 'Search for a product or brand...',
       allCats: 'All',
       'Colored Lenses': 'Colored Lenses',
       'Clear Lenses': 'Clear Lenses',
-      'Solutions & Accessories': 'Solutions & Accessories',
+      solutions: 'Solutions',
+      accessories: 'Accessories',
       allBrands: 'All brands',
       results: 'products',
       egp: 'EGP',
       addToCart: 'Add to cart',
-      cartTitle: 'Your cart',
+      cartTitle: 'Shopping Cart',
       cartEmpty: 'Your cart is empty',
       total: 'Total:',
-      cartNote: 'Payment and delivery are arranged on WhatsApp after you send the order.',
-      checkout: 'Complete order on WhatsApp',
-      powerR: 'Right eye power',
-      powerL: 'Left eye power',
+      cartNote: 'You will be redirected to WhatsApp to send the order and confirm payment method',
+      checkout: 'Checkout via WhatsApp',
+      powerR: 'Right eye lens',
+      powerL: 'Left eye lens',
       plano: 'Plano (0.00)',
       qty: 'Qty',
-      footerTag: 'Original lenses, fast delivery across Egypt',
-      waContact: 'WhatsApp: +20 15 00059484',
+      trust1: '100% Original Products',
+      trust2: 'Secure Payment via WhatsApp',
+      trust3: 'Fast Delivery to All Governorates',
+      trust4: 'Outstanding Customer Service',
+      aboutTitle: 'About Nasimi',
+      aboutText: 'Nasimi is your first destination for original contact lenses in Egypt. We pick the best international brands of colored and clear lenses and solutions, and deliver them to your door in any governorate. Because your eyes deserve the best.',
+      footerQuick: 'Quick Links',
+      footerService: 'Customer Service',
+      footerContact: 'Contact Us',
+      footerHours: '9 AM to 12 AM',
+      privacy: 'Privacy Policy',
+      returns: 'Return Policy',
+      shipping: 'Shipping & Delivery',
+      rights: 'Nasimi. All rights reserved.',
+      footerTag: 'Nasimi - because your eyes deserve the best',
       remove: 'Remove',
       colors: ['Blue','Green','Grey','Hazel','Brown','Honey','Olive','Turquoise','Violet','Pink','Chocolate','Black','Amber','Mint','Sky','Ice','Gold','Purple'],
       colorNames: {Blue:'Blue',Green:'Green',Grey:'Grey',Hazel:'Hazel',Brown:'Brown',Honey:'Honey',Olive:'Olive',Turquoise:'Turquoise',Violet:'Violet',Pink:'Pink',Chocolate:'Chocolate',Black:'Black',Amber:'Amber',Mint:'Mint',Sky:'Sky',Ice:'Ice',Gold:'Gold',Purple:'Purple'},
@@ -77,8 +139,9 @@
     }
   };
 
+  var urlLang = new URLSearchParams(location.search).get('lang');
   var state = {
-    lang: localStorage.getItem('nasimi_lang') || 'ar',
+    lang: (urlLang === 'en' || urlLang === 'ar') ? urlLang : (localStorage.getItem('nasimi_lang') || 'ar'),
     products: [],
     category: 'all',
     brand: 'all',
@@ -147,6 +210,19 @@
       .then(function (arr) { return arr.map(normalize); });
   }
 
+  function isAccessory(p) {
+    return p.category === 'Solutions & Accessories' &&
+      (p.brand.toLowerCase() === 'accessories' || /box|case|holder|tweezers/i.test(p.title));
+  }
+
+  function inCategory(p, cat) {
+    if (cat === 'all') return true;
+    if (cat === 'lenses') return p.category === 'Colored Lenses' || p.category === 'Clear Lenses';
+    if (cat === 'solutions') return p.category === 'Solutions & Accessories' && !isAccessory(p);
+    if (cat === 'accessories') return isAccessory(p);
+    return p.category === cat;
+  }
+
   function powerOptions() {
     var opts = [{ v: '0.00', label: t('plano') }];
     for (var d = 0.5; d <= 6.001; d += 0.25) opts.push({ v: '+' + d.toFixed(2), label: '+' + d.toFixed(2) });
@@ -154,25 +230,16 @@
     return opts;
   }
 
-  var BRAND_HUES = {};
-  function brandHue(brand) {
-    if (!(brand in BRAND_HUES)) {
-      var h = 0;
-      for (var i = 0; i < brand.length; i++) h = (h * 31 + brand.charCodeAt(i)) % 360;
-      BRAND_HUES[brand] = h;
-    }
-    return BRAND_HUES[brand];
-  }
   function imgHtml(p, cls) {
-    if (p.image) return '<div class="' + cls + '"><img src="' + p.image + '" alt="" loading="lazy" onerror="this.parentNode.style.background=\'hsl(' + brandHue(p.brand) + ',45%,55%)\';this.remove()"></div>';
-    return '<div class="' + cls + '" style="background:linear-gradient(135deg,hsl(' + brandHue(p.brand) + ',45%,60%),hsl(' + ((brandHue(p.brand)+40)%360) + ',45%,45%))">' + (p.brand[0] || 'N') + '</div>';
+    if (p.image) return '<div class="' + cls + '"><img src="' + p.image + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<span class=ph-letter>' + (p.brand[0] || 'N') + '</span>\'"></div>';
+    return '<div class="' + cls + '"><span class="ph-letter">' + (p.brand[0] || 'N') + '</span></div>';
   }
 
   function filtered() {
     var q = state.search.toLowerCase();
     return state.products.filter(function (p) {
       if (!p.stock) return false;
-      if (state.category !== 'all' && p.category !== state.category) return false;
+      if (!inCategory(p, state.category)) return false;
       if (state.brand !== 'all' && p.brand !== state.brand) return false;
       if (state.color !== 'all' && p.colors.indexOf(state.color) < 0) return false;
       if (state.duration !== 'all' && p.duration !== state.duration) return false;
@@ -181,35 +248,44 @@
     });
   }
 
+  var TABS = ['all', 'Colored Lenses', 'Clear Lenses', 'solutions', 'accessories'];
   function renderTabs() {
-    var cats = ['all', 'Colored Lenses', 'Clear Lenses', 'Solutions & Accessories'];
     var el = document.getElementById('cat-tabs');
     el.innerHTML = '';
-    cats.forEach(function (c) {
+    TABS.forEach(function (c) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'cat-tab' + (state.category === c ? ' active' : '');
       b.textContent = c === 'all' ? t('allCats') : t(c);
-      b.onclick = function () { state.category = c; state.brand = 'all'; state.color = 'all'; state.duration = 'all'; renderAll(); };
+      b.onclick = function () { setCategory(c); };
       el.appendChild(b);
     });
+    document.querySelectorAll('.main-nav a[data-cat]').forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('data-cat') === state.category);
+    });
+  }
+
+  function setCategory(c) {
+    state.category = c; state.brand = 'all'; state.color = 'all'; state.duration = 'all'; state.search = '';
+    document.getElementById('search').value = '';
+    renderAll();
   }
 
   function renderFilters() {
     var sel = document.getElementById('brand-filter');
     var brands = [];
     state.products.forEach(function (p) {
-      if (p.stock && (state.category === 'all' || p.category === state.category) && brands.indexOf(p.brand) < 0) brands.push(p.brand);
+      if (p.stock && inCategory(p, state.category) && brands.indexOf(p.brand) < 0) brands.push(p.brand);
     });
     brands.sort();
     sel.innerHTML = '<option value="all">' + t('allBrands') + '</option>' + brands.map(function (b) {
       return '<option value="' + b + '"' + (state.brand === b ? ' selected' : '') + '>' + b + '</option>';
     }).join('');
 
-    var showLensFilters = state.category === 'all' || state.category === 'Colored Lenses';
+    var showColors = state.category === 'all' || state.category === 'lenses' || state.category === 'Colored Lenses';
     var cc = document.getElementById('color-chips');
     cc.innerHTML = '';
-    if (showLensFilters) {
+    if (showColors) {
       var avail = {};
       state.products.forEach(function (p) {
         if (p.stock && p.category === 'Colored Lenses' && (state.brand === 'all' || p.brand === state.brand)) p.colors.forEach(function (c) { avail[c] = 1; });
@@ -226,7 +302,7 @@
     }
     var dc = document.getElementById('duration-chips');
     dc.innerHTML = '';
-    if (state.category !== 'Solutions & Accessories') {
+    if (state.category !== 'solutions' && state.category !== 'accessories' && state.category !== 'Solutions & Accessories') {
       t('durations').forEach(function (d) {
         var b = document.createElement('button');
         b.type = 'button';
@@ -238,6 +314,19 @@
     }
   }
 
+  function cardHtml(p, badge) {
+    return (badge ? '<span class="p-badge">' + t('bestBadge') + '</span>' : '') +
+      imgHtml(p, 'product-img') +
+      '<div class="product-info"><div class="product-brand">' + p.brand + '</div>' +
+      '<div class="product-title">' + p.title + '</div>' +
+      '<div class="product-price">' + fmtPrice(p.price) + '</div>' +
+      '<button class="card-add" type="button"><svg viewBox="0 0 24 24" class="ic"><path fill="none" stroke="currentColor" stroke-width="2" d="M6 6h15l-1.7 8.5a2 2 0 0 1-2 1.5H9.7a2 2 0 0 1-2-1.6L5.2 3.9A1 1 0 0 0 4.2 3H2"/><circle cx="9.5" cy="20" r="1.6" fill="currentColor"/><circle cx="17.5" cy="20" r="1.6" fill="currentColor"/></svg>' + t('addToCart') + '</button></div>';
+  }
+
+  function bindCard(card, p) {
+    card.onclick = function () { openModal(p); };
+  }
+
   function renderGrid() {
     var list = filtered();
     document.getElementById('result-count').textContent = list.length + ' ' + t('results');
@@ -246,11 +335,30 @@
     list.forEach(function (p) {
       var card = document.createElement('div');
       card.className = 'product-card';
-      card.innerHTML = imgHtml(p, 'product-img') +
-        '<div class="product-info"><div class="product-brand">' + p.brand + '</div>' +
-        '<div class="product-title">' + p.title + '</div>' +
-        '<div class="product-price">' + fmtPrice(p.price) + '</div></div>';
-      card.onclick = function () { openModal(p); };
+      card.innerHTML = cardHtml(p, false);
+      bindCard(card, p);
+      grid.appendChild(card);
+    });
+  }
+
+  var BEST_TITLES = ['1-DAY ACUVUE OASYS', 'Acuvue Oasys', 'Acuvue Moist', 'Acuvue Oasys Toric'];
+  function renderBest() {
+    var grid = document.getElementById('best-grid');
+    grid.innerHTML = '';
+    var picks = [];
+    BEST_TITLES.forEach(function (title) {
+      var p = state.products.filter(function (x) { return x.title === title && x.stock; })[0];
+      if (p) picks.push(p);
+    });
+    state.products.forEach(function (p) {
+      if (picks.length >= 4) return;
+      if (p.stock && p.category === 'Colored Lenses' && (p.brand === 'Bella' || p.brand === 'Desio') && picks.indexOf(p) < 0) picks.push(p);
+    });
+    picks.slice(0, 4).forEach(function (p) {
+      var card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = cardHtml(p, true);
+      bindCard(card, p);
       grid.appendChild(card);
     });
   }
@@ -363,15 +471,14 @@
     document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.getAttribute('data-i18n')); });
     document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
     document.getElementById('checkout-wa').textContent = t('checkout');
-    document.getElementById('footer-wa').textContent = t('waContact');
-    document.title = ar ? 'ناسيمي | Nasimi - عدسات لاصقة' : 'Nasimi | ناسيمي - Contact Lenses';
+    document.title = ar ? 'ناسيمي | NASIMI - عدسات لاصقة' : 'NASIMI | ناسيمي - Contact Lenses';
     localStorage.setItem('nasimi_lang', state.lang);
   }
 
   function renderAll() { applyLang(); renderTabs(); renderFilters(); renderGrid(); renderCartCount(); }
   function recount() { document.getElementById('result-count').textContent = filtered().length + ' ' + t('results'); }
 
-  document.getElementById('lang-toggle').onclick = function () { state.lang = state.lang === 'ar' ? 'en' : 'ar'; renderAll(); renderCart(); };
+  document.getElementById('lang-toggle').onclick = function () { state.lang = state.lang === 'ar' ? 'en' : 'ar'; renderAll(); renderBest(); renderCart(); };
   document.getElementById('search').oninput = function (e) { state.search = e.target.value; renderGrid(); recount(); };
   document.getElementById('brand-filter').onchange = function (e) { state.brand = e.target.value; state.color = 'all'; renderFilters(); renderGrid(); recount(); };
   document.getElementById('cart-button').onclick = openCart;
@@ -379,11 +486,34 @@
   document.getElementById('modal-close').onclick = closeModal;
   document.getElementById('modal-backdrop').onclick = function (e) { if (e.target === this) closeModal(); };
   document.getElementById('checkout-wa').onclick = checkout;
-  document.getElementById('footer-wa').href = 'https://wa.me/' + CFG.whatsappNumber;
+  document.getElementById('search-jump').onclick = function () {
+    document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(function () { document.getElementById('search').focus(); }, 400);
+  };
+  document.getElementById('brand-home').onclick = function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
+  document.querySelectorAll('[data-cat]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      setCategory(a.getAttribute('data-cat'));
+      var target = a.getAttribute('href');
+      if (target === '#catalog') document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  var waUrl = 'https://wa.me/' + CFG.whatsappNumber;
+  document.getElementById('topbar-wa').href = waUrl;
+  document.getElementById('footer-wa').href = waUrl;
+  document.getElementById('footer-contact-link').href = waUrl;
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  applyLang();
+  renderCartCount();
   loadProducts().then(function (products) {
     state.products = products;
     renderAll();
+    renderBest();
   }).catch(function (err) {
     console.error(err);
     document.getElementById('product-grid').innerHTML = '<p>Failed to load products.</p>';
