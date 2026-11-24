@@ -41,6 +41,7 @@
       cartEmpty: 'السلة فارغة',
       total: 'الإجمالي:',
       cartNote: 'سيتم تحويلك إلى واتساب لإرسال الطلب وتأكيده وطريقة الدفع',
+      cartInvalid: 'أزلنا هذه المنتجات من السلة لأن قياساتها غير مكتملة. أعد إضافتها واختر القياسات الكاملة لكل عين:',
       checkout: 'إتمام الطلب عبر واتساب',
       powerR: 'عدسة العين اليمنى',
       powerL: 'عدسة العين اليسرى',
@@ -117,6 +118,7 @@
       cartEmpty: 'Your cart is empty',
       total: 'Total:',
       cartNote: 'You will be redirected to WhatsApp to send the order and confirm payment method',
+      cartInvalid: 'We removed these items because their lens powers were incomplete. Please add them again and choose the full powers for each eye:',
       checkout: 'Checkout via WhatsApp',
       powerR: 'Right eye lens',
       powerL: 'Left eye lens',
@@ -271,7 +273,7 @@
   function cylValues() { return ['-0.75', '-1.25', '-1.75', '-2.25']; }
   function axValues() {
     var vals = [];
-    for (var a = 0; a <= 180; a += 10) vals.push(String(a));
+    for (var a = 10; a <= 180; a += 10) vals.push(String(a));
     return vals;
   }
 
@@ -679,11 +681,45 @@
     document.getElementById('cart-total').textContent = fmtPrice(cartTotal());
   }
 
-  function openCart() { renderCart(); document.getElementById('cart-drawer').classList.remove('hidden'); }
+  function openCart() { hideCartNotice(); renderCart(); document.getElementById('cart-drawer').classList.remove('hidden'); }
   function closeCart() { document.getElementById('cart-drawer').classList.add('hidden'); }
+
+  function lineInvalid(i) {
+    if (!i.specs) return false;
+    var toric = /toric/i.test(i.title);
+    function eyeOk(s) {
+      if (!s || !s.sph) return false;
+      if (toric && (!s.cyl || s.ax === undefined || s.ax === null || s.ax === '')) return false;
+      return true;
+    }
+    return !eyeOk(i.specs.R) || !eyeOk(i.specs.L);
+  }
+
+  function showCartNotice(titles) {
+    var n = document.getElementById('cart-notice');
+    if (!n) return;
+    n.textContent = '';
+    n.appendChild(el('div', '', t('cartInvalid')));
+    titles.forEach(function (title) { n.appendChild(el('div', 'cn-title', title)); });
+    n.classList.remove('hidden');
+  }
+  function hideCartNotice() {
+    var n = document.getElementById('cart-notice');
+    if (n) n.classList.add('hidden');
+  }
 
   function checkout() {
     if (!state.cart.length) return;
+    var bad = state.cart.filter(lineInvalid);
+    if (bad.length) {
+      state.cart = state.cart.filter(function (i) { return !lineInvalid(i); });
+      saveCart();
+      renderCart();
+      renderCartCount();
+      showCartNotice(bad.map(function (i) { return i.title; }));
+      return;
+    }
+    hideCartNotice();
     var L = I18N[state.lang];
     var lines = [L.orderIntro, ''];
     state.cart.forEach(function (i, n) {
