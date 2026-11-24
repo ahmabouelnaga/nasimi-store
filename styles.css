@@ -221,3 +221,23 @@ html[dir="rtl"] .cart-drawer { box-shadow: 4px 0 24px rgba(22,19,14,.2); }
   .topbar-perks { display: none; }
   .about { flex-direction: column; text-align: center; }
 }
+
+/* Fixes: tap targets, empty-cart checkout, toric field layout */
+#checkout-wa:disabled { opacity: .4; cursor: not-allowed; }
+.qty-btn { width: 44px; height: 44px; }
+.ci-qty button { width: 40px; height: 40px; }
+.ci-remove { padding: 12px 8px; }
+.card-add { min-height: 44px; }
+.icon-btn { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.modal-close { min-width: 44px; min-height: 44px; }
+.main-nav a { padding: 10px 14px; }
+.power-field select { min-height: 44px; }
+@media (max-width: 520px) {
+  .eye-fields { flex-wrap: wrap; }
+  .eye-fields .power-field { flex: 1 1 calc(50% - 5px); }
+  .eye-fields .power-field:nth-child(3) { flex: 1 1 100%; }
+}
+.btn-ghost { min-height: 44px; }
+.topbar-contact { display: inline-flex; align-items: center; min-height: 44px; }
+.view-all { display: inline-flex; align-items: center; min-height: 44px; }
+.footer-contact-link, .footer-phone, footer a { display: inline-block; padding: 10px 0; }
