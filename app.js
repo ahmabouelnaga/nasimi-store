@@ -720,6 +720,7 @@
       });
     }
     document.getElementById('cart-total').textContent = fmtPrice(cartTotal());
+    document.getElementById('checkout-wa').disabled = !state.cart.length;
   }
 
   function openCart() { hideCartNotice(); renderCart(); document.getElementById('cart-drawer').classList.remove('hidden'); }
