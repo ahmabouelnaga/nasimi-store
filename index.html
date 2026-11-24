@@ -110,6 +110,7 @@
 
 <main class="container" id="catalog">
   <h2 class="catalog-title" data-i18n="catalogTitle"></h2>
+  <div class="brand-chips" id="brand-chips"></div>
   <nav class="cat-tabs" id="cat-tabs"></nav>
   <div class="filters">
     <input id="search" type="search" data-i18n-ph="searchPh" class="search-input">
@@ -162,6 +163,8 @@
   </div>
 </div>
 
+<button id="cart-bar" class="cart-bar hidden" type="button"><span id="cart-bar-count"></span><span id="cart-bar-total"></span><span class="cart-bar-go" id="cart-bar-go"></span></button>
+
 <aside id="cart-drawer" class="cart-drawer hidden" aria-label="cart">
   <div class="cart-header">
     <h2 data-i18n="cartTitle"></h2>
@@ -171,6 +174,12 @@
   <div id="cart-items" class="cart-items"></div>
   <div class="cart-footer">
     <div class="cart-total"><span data-i18n="total"></span> <strong id="cart-total"></strong></div>
+    <div class="cust-fields">
+      <input id="cust-name" type="text" autocomplete="name" data-i18n-ph="phName">
+      <input id="cust-phone" type="tel" autocomplete="tel" data-i18n-ph="phPhone">
+      <input id="cust-address" type="text" autocomplete="street-address" data-i18n-ph="phAddress">
+      <input id="cust-notes" type="text" data-i18n-ph="phNotes">
+    </div>
     <p class="cart-note" data-i18n="cartNote"></p>
     <button id="checkout-wa" class="btn-wa" type="button"></button>
   </div>
