@@ -34,6 +34,7 @@
       solutions: 'محاليل',
       accessories: 'إكسسوارات',
       allBrands: 'كل الماركات',
+      phName: 'الاسم', phPhone: 'رقم الموبايل', phAddress: 'العنوان', phNotes: 'ملاحظات (اختياري)', cartBar: 'السلة', barGo: 'إتمام الطلب ←', orderPhone: 'الموبايل:', noRes: 'مفيش نتايج للبحث ده', askWa: 'اسألنا على واتساب عن العدسة اللي بتدور عليها', choosePower: 'اختر القوة',
       results: 'منتج',
       egp: 'جنيه',
       addToCart: 'أضف إلى السلة',
@@ -111,6 +112,7 @@
       solutions: 'Solutions',
       accessories: 'Accessories',
       allBrands: 'All brands',
+      phName: 'Name', phPhone: 'Mobile number', phAddress: 'Address', phNotes: 'Notes (optional)', cartBar: 'Cart', barGo: 'Checkout →', orderPhone: 'Mobile:', noRes: 'No results found', askWa: 'Ask us on WhatsApp about the lens you want', choosePower: 'Choose power',
       results: 'products',
       egp: 'EGP',
       addToCart: 'Add to cart',
@@ -435,15 +437,19 @@
   function cardEl(p, badge) {
     var card = el('div', 'product-card');
     if (badge) card.appendChild(el('span', 'p-badge', t('bestBadge')));
-    card.appendChild(imgEl(p, 'product-img'));
+    if (p.image) card.appendChild(imgEl(p, 'product-img'));
+    else card.classList.add('no-img');
     var info = el('div', 'product-info');
-    info.appendChild(el('div', 'product-brand', p.brand));
+    var top = el('div', 'product-top');
+    top.appendChild(el('div', 'product-brand', p.brand));
+    if (/toric/i.test(p.title)) top.appendChild(el('span', 'tag-toric', 'Toric'));
+    info.appendChild(top);
     info.appendChild(el('div', 'product-title', p.title));
     info.appendChild(el('div', 'product-price', fmtPrice(p.price)));
     var btn = el('button', 'card-add');
     btn.type = 'button';
     btn.innerHTML = CART_ICON_SVG;
-    btn.appendChild(document.createTextNode(t('addToCart')));
+    btn.appendChild(document.createTextNode(p.power === false || /toric/i.test(p.title) ? t('choosePower') : t('addToCart')));
     info.appendChild(btn);
     card.appendChild(info);
     card.onclick = function () { openModal(p); };
@@ -456,6 +462,35 @@
     var grid = document.getElementById('product-grid');
     grid.textContent = '';
     list.forEach(function (p) { grid.appendChild(cardEl(p, false)); });
+    if (!list.length) {
+      var nr = el('div', 'no-results');
+      nr.appendChild(el('p', '', t('noRes')));
+      var wa = el('a', 'btn-wa-link', t('askWa'));
+      wa.href = 'https://wa.me/' + CFG.whatsappNumber; wa.target = '_blank'; wa.rel = 'noopener';
+      nr.appendChild(wa);
+      grid.appendChild(nr);
+    }
+    renderBrandChips();
+  }
+
+  function renderBrandChips() {
+    var box = document.getElementById('brand-chips');
+    if (!box || box.dataset.built) return;
+    box.dataset.built = '1';
+    var sel = document.getElementById('brand-filter');
+    var all = el('button', 'bchip active', t('allBrands'));
+    all.type = 'button'; box.appendChild(all);
+    brandList().forEach(function (b) {
+      var x = el('button', 'bchip', b.name); x.type = 'button'; box.appendChild(x);
+    });
+    box.addEventListener('click', function (e) {
+      var t0 = e.target.closest('.bchip'); if (!t0) return;
+      [].forEach.call(box.children, function (n) { n.classList.remove('active'); });
+      t0.classList.add('active');
+      sel.value = t0 === box.firstChild ? '' : t0.textContent;
+      if (sel.value !== (t0 === box.firstChild ? '' : t0.textContent)) sel.selectedIndex = 0;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    });
   }
 
   var BRAND_EXCLUDE = { accessories: true };
@@ -673,7 +708,15 @@
     renderCartCount();
   }
 
-  function renderCartCount() { document.getElementById('cart-count').textContent = cartCount(); }
+  function renderCartCount() {
+    document.getElementById('cart-count').textContent = cartCount();
+    var bar = document.getElementById('cart-bar');
+    if (bar) {
+      bar.classList.toggle('hidden', !cartCount());
+      document.getElementById('cart-bar-count').textContent = t('cartBar') + ' (' + cartCount() + ')';
+      document.getElementById('cart-bar-total').textContent = fmtPrice(cartTotal());
+    }
+  }
 
   function fmtEye(spec, labels) {
     var parts = [];
@@ -773,9 +816,14 @@
     lines.push('');
     lines.push(L.orderTotal + ': ' + cartTotal() + ' ' + CFG.currency);
     lines.push('');
-    lines.push(L.orderName);
-    lines.push(L.orderAddress);
-    lines.push(L.orderNotes);
+    var cn = (document.getElementById('cust-name').value || '').trim();
+    var cp = (document.getElementById('cust-phone').value || '').trim();
+    var ca = (document.getElementById('cust-address').value || '').trim();
+    var cm = (document.getElementById('cust-notes').value || '').trim();
+    lines.push(L.orderName + ' ' + cn);
+    if (cp) lines.push(L.orderPhone + ' ' + cp);
+    lines.push(L.orderAddress + ' ' + ca);
+    lines.push(L.orderNotes + ' ' + cm);
     var url = 'https://wa.me/' + CFG.whatsappNumber + '?text=' + encodeURIComponent(lines.join('\n'));
     window.open(url, '_blank');
   }
@@ -788,6 +836,9 @@
     document.querySelectorAll('[data-i18n]').forEach(function (elm) { elm.textContent = t(elm.getAttribute('data-i18n')); });
     document.querySelectorAll('[data-i18n-ph]').forEach(function (elm) { elm.placeholder = t(elm.getAttribute('data-i18n-ph')); });
     document.getElementById('checkout-wa').textContent = t('checkout');
+    var bg = document.getElementById('cart-bar-go'); if (bg) bg.textContent = t('barGo');
+    var bc = document.getElementById('brand-chips'); if (bc) { bc.textContent = ''; delete bc.dataset.built; if (state.products.length) renderBrandChips(); }
+    if (typeof renderCartCount === 'function' && document.getElementById('cart-bar')) renderCartCount();
     document.title = ar ? 'ناسيمي | NASIMI - عدسات لاصقة' : 'NASIMI | ناسيمي - Contact Lenses';
     localStorage.setItem('nasimi_lang', state.lang);
   }
@@ -803,6 +854,7 @@
   document.getElementById('modal-close').onclick = closeModal;
   document.getElementById('modal-backdrop').onclick = function (e) { if (e.target === this) closeModal(); };
   document.getElementById('checkout-wa').onclick = checkout;
+  document.getElementById('cart-bar').onclick = openCart;
   document.getElementById('search-jump').onclick = function () {
     if (location.hash === '#catalog') router(); else location.hash = '#catalog';
     setTimeout(function () { document.getElementById('search').focus(); }, 500);
@@ -848,6 +900,10 @@
   document.getElementById('footer-contact-link').href = waUrl;
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  (function skeleton() {
+    var g = document.getElementById('product-grid');
+    for (var k = 0; k < 8; k++) g.appendChild(el('div', 'product-card skeleton'));
+  })();
   applyLang();
   renderCartCount();
 
