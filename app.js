@@ -11,6 +11,7 @@
       navLenses: 'العدسات اللاصقة',
       navSolutions: 'محلول العدسات',
       navAccessories: 'الملحقات',
+      navBrands: 'الماركات',
       navAbout: 'عن ناسيمي',
       navContact: 'تواصل معنا',
       heroTitle: 'رؤيتك أوضح .. كل يوم',
@@ -20,6 +21,8 @@
       tileSolutions: 'محلول العدسات',
       tileAccessories: 'الملحقات',
       bestTitle: 'أفضل المنتجات',
+      brandsTitle: 'تسوق حسب الماركة',
+      backHome: 'الرئيسية',
       viewAll: 'عرض الكل',
       bestBadge: 'الأكثر مبيعاً',
       catalogTitle: 'تصفح المنتجات',
@@ -27,6 +30,7 @@
       allCats: 'الكل',
       'Colored Lenses': 'عدسات ملونة',
       'Clear Lenses': 'عدسات طبية',
+      'Solutions & Accessories': 'محاليل وإكسسوارات',
       solutions: 'محاليل',
       accessories: 'إكسسوارات',
       allBrands: 'كل الماركات',
@@ -83,6 +87,7 @@
       navLenses: 'Contact Lenses',
       navSolutions: 'Lens Solutions',
       navAccessories: 'Accessories',
+      navBrands: 'Brands',
       navAbout: 'About Nasimi',
       navContact: 'Contact Us',
       heroTitle: 'Clearer vision .. every day',
@@ -92,6 +97,8 @@
       tileSolutions: 'Lens Solutions',
       tileAccessories: 'Accessories',
       bestTitle: 'Best Sellers',
+      brandsTitle: 'Shop by Brand',
+      backHome: 'Home',
       viewAll: 'View All',
       bestBadge: 'Best Seller',
       catalogTitle: 'Browse Products',
@@ -99,6 +106,7 @@
       allCats: 'All',
       'Colored Lenses': 'Colored Lenses',
       'Clear Lenses': 'Clear Lenses',
+      'Solutions & Accessories': 'Solutions & Accessories',
       solutions: 'Solutions',
       accessories: 'Accessories',
       allBrands: 'All brands',
@@ -158,6 +166,8 @@
     color: 'all',
     duration: 'all',
     search: '',
+    brandPage: null,
+    brandCat: 'all',
     cart: migrateCart(JSON.parse(localStorage.getItem('nasimi_cart') || '[]'))
   };
 
@@ -405,6 +415,105 @@
     list.forEach(function (p) { grid.appendChild(cardEl(p, false)); });
   }
 
+  var BRAND_EXCLUDE = { accessories: true };
+
+  function brandList() {
+    var counts = {};
+    state.products.forEach(function (p) {
+      if (!p.stock) return;
+      if (BRAND_EXCLUDE[p.brand.toLowerCase()]) return;
+      counts[p.brand] = (counts[p.brand] || 0) + 1;
+    });
+    return Object.keys(counts).sort(function (a, b) { return a.localeCompare(b); }).map(function (b) {
+      return { name: b, count: counts[b] };
+    });
+  }
+
+  function renderBrands() {
+    var grid = document.getElementById('brands-grid');
+    if (!grid) return;
+    grid.textContent = '';
+    brandList().forEach(function (b) {
+      var card = el('a', 'brand-card');
+      card.href = '#/brand/' + encodeURIComponent(b.name);
+      card.appendChild(el('span', 'brand-letter', (b.name[0] || 'N')));
+      card.appendChild(el('span', 'brand-name', b.name));
+      card.appendChild(el('span', 'brand-count', b.count + ' ' + t('results')));
+      grid.appendChild(card);
+    });
+  }
+
+  function brandProducts(name) {
+    return state.products.filter(function (p) { return p.stock && p.brand === name; });
+  }
+
+  function renderBrandPage() {
+    var name = state.brandPage;
+    if (!name) return;
+    document.getElementById('brand-bc-name').textContent = name;
+    document.getElementById('brand-page-title').textContent = name;
+    document.getElementById('brand-page-letter').textContent = (name[0] || 'N');
+    var prods = brandProducts(name);
+    document.getElementById('brand-page-count').textContent = prods.length + ' ' + t('results');
+
+    var cats = ['all', 'Colored Lenses', 'Clear Lenses', 'Solutions & Accessories'].filter(function (c) {
+      return c === 'all' || prods.some(function (p) { return p.category === c; });
+    });
+    if (cats.indexOf(state.brandCat) < 0) state.brandCat = 'all';
+    var tabs = document.getElementById('brand-cat-tabs');
+    tabs.textContent = '';
+    cats.forEach(function (c) {
+      var b = el('button', 'cat-tab' + (state.brandCat === c ? ' active' : ''), c === 'all' ? t('allCats') : t(c));
+      b.type = 'button';
+      b.onclick = function () { state.brandCat = c; renderBrandPage(); };
+      tabs.appendChild(b);
+    });
+
+    var grid = document.getElementById('brand-grid');
+    grid.textContent = '';
+    prods.filter(function (p) { return state.brandCat === 'all' || p.category === state.brandCat; })
+      .forEach(function (p) { grid.appendChild(cardEl(p, false)); });
+  }
+
+  var VIEW_SECTIONS = {
+    home: ['.hero', '.cat-tiles', '#best', '#brands', '.trust', '.about'],
+    catalog: ['#catalog', '.trust'],
+    brand: ['#brand-page', '.trust']
+  };
+  var ALL_VIEW_SELS = ['.hero', '.cat-tiles', '#best', '#brands', '.trust', '.about', '#catalog', '#brand-page'];
+  function showView(name) {
+    var show = VIEW_SECTIONS[name];
+    ALL_VIEW_SELS.forEach(function (s) {
+      var elm = document.querySelector(s);
+      if (elm) elm.classList.toggle('hidden', show.indexOf(s) < 0);
+    });
+  }
+
+  function currentView() {
+    if (/^#\/brand\//.test(location.hash)) return 'brand';
+    if (location.hash === '#catalog') return 'catalog';
+    return 'home';
+  }
+
+  function router(scroll) {
+    var h = location.hash;
+    var m = h.match(/^#\/brand\/(.+)$/);
+    if (m) {
+      var name = decodeURIComponent(m[1]);
+      if (name !== state.brandPage) { state.brandPage = name; state.brandCat = 'all'; }
+      renderBrandPage();
+      showView('brand');
+      if (scroll !== false) window.scrollTo({ top: 0 });
+    } else if (h === '#catalog') {
+      showView('catalog');
+      if (scroll !== false) document.getElementById('catalog').scrollIntoView();
+    } else {
+      state.brandPage = null;
+      showView('home');
+      renderTabs();
+    }
+  }
+
   var BEST_TITLES = ['1-DAY ACUVUE OASYS', 'Acuvue Oasys', 'Acuvue Moist', 'Acuvue Oasys Toric'];
   function renderBest() {
     var grid = document.getElementById('best-grid');
@@ -608,7 +717,7 @@
   function renderAll() { applyLang(); renderTabs(); renderFilters(); renderGrid(); renderCartCount(); }
   function recount() { document.getElementById('result-count').textContent = filtered().length + ' ' + t('results'); }
 
-  document.getElementById('lang-toggle').onclick = function () { state.lang = state.lang === 'ar' ? 'en' : 'ar'; renderAll(); renderBest(); renderCart(); };
+  document.getElementById('lang-toggle').onclick = function () { state.lang = state.lang === 'ar' ? 'en' : 'ar'; renderAll(); renderBest(); renderBrands(); renderBrandPage(); renderCart(); };
   document.getElementById('search').oninput = function (e) { state.search = e.target.value; renderGrid(); recount(); };
   document.getElementById('brand-filter').onchange = function (e) { state.brand = e.target.value; state.color = 'all'; renderFilters(); renderGrid(); recount(); };
   document.getElementById('cart-button').onclick = openCart;
@@ -617,20 +726,43 @@
   document.getElementById('modal-backdrop').onclick = function (e) { if (e.target === this) closeModal(); };
   document.getElementById('checkout-wa').onclick = checkout;
   document.getElementById('search-jump').onclick = function () {
-    document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
-    setTimeout(function () { document.getElementById('search').focus(); }, 400);
+    if (location.hash === '#catalog') router(); else location.hash = '#catalog';
+    setTimeout(function () { document.getElementById('search').focus(); }, 500);
   };
-  document.getElementById('brand-home').onclick = function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  document.getElementById('brand-home').onclick = function (e) { e.preventDefault(); if (location.hash) location.hash = ''; else router(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   document.querySelectorAll('[data-cat]').forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       setCategory(a.getAttribute('data-cat'));
-      var target = a.getAttribute('href');
-      if (target === '#catalog') document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
-      else window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (a.getAttribute('href') === '#catalog') {
+        if (location.hash === '#catalog') router(); else location.hash = '#catalog';
+      } else {
+        if (location.hash) location.hash = ''; else router();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   });
+
+  document.getElementById('brand-back').onclick = function (e) { e.preventDefault(); location.hash = ''; };
+  document.getElementById('brand-bc-brands').onclick = function (e) {
+    e.preventDefault();
+    location.hash = '';
+    setTimeout(function () { document.getElementById('brands').scrollIntoView({ behavior: 'smooth' }); }, 60);
+  };
+  document.querySelectorAll('a[href="#about"], a[href="#contact"], a[href="#brands"]').forEach(function (a) {
+    if (a.id === 'brand-bc-brands') return;
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = a.getAttribute('href');
+      if (location.hash) location.hash = ''; else router();
+      setTimeout(function () {
+        var elm = document.querySelector(target);
+        if (elm) elm.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+    });
+  });
+  window.addEventListener('hashchange', function () { router(); });
 
   var waUrl = 'https://wa.me/' + CFG.whatsappNumber;
   document.getElementById('topbar-wa').href = waUrl;
@@ -644,6 +776,8 @@
     state.products = products;
     renderAll();
     renderBest();
+    renderBrands();
+    router(false);
   }).catch(function (err) {
     console.error(err);
     document.getElementById('product-grid').textContent = 'Failed to load products.';
