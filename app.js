@@ -242,13 +242,54 @@
     };
   }
 
+  var CACHE_KEY = 'nasimi_products_v1';
+  var FALLBACK_CSV = 'products-fallback.csv';
+
+  function fetchText(url, ms) {
+    return new Promise(function (resolve, reject) {
+      var done = false;
+      var timer = setTimeout(function () {
+        if (done) return;
+        done = true;
+        reject(new Error('timeout'));
+      }, ms);
+      fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('http ' + r.status);
+        return r.text();
+      }).then(function (txt) {
+        if (done) return;
+        done = true; clearTimeout(timer); resolve(txt);
+      }).catch(function (e) {
+        if (done) return;
+        done = true; clearTimeout(timer); reject(e);
+      });
+    });
+  }
+
+  function csvToProducts(txt) {
+    var list = parseCsv(txt).map(normalize);
+    if (!list.length) throw new Error('empty catalog');
+    return list;
+  }
+
+  // Order: live Sheet (8s timeout) -> last good copy in this browser -> bundled snapshot.
+  // The Sheet always wins when it answers, so Sheet edits show up as before.
   function loadProducts() {
-    if (CFG.sheetCsvUrl) {
-      return fetch(CFG.sheetCsvUrl).then(function (r) { return r.text(); })
-        .then(function (txt) { return parseCsv(txt).map(normalize); });
-    }
-    return fetch(CFG.productsJsonUrl).then(function (r) { return r.json(); })
-      .then(function (arr) { return arr.map(normalize); });
+    var sheet = CFG.sheetCsvUrl
+      ? fetchText(CFG.sheetCsvUrl, 8000).then(function (txt) {
+          var list = csvToProducts(txt);
+          try { localStorage.setItem(CACHE_KEY, txt); } catch (e) {}
+          return list;
+        })
+      : Promise.reject(new Error('no sheet'));
+    return sheet.catch(function () {
+      var cached = null;
+      try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+      if (cached) {
+        try { return csvToProducts(cached); } catch (e) {}
+      }
+      return fetchText(FALLBACK_CSV, 10000).then(csvToProducts);
+    });
   }
 
   function isAccessory(p) {
@@ -816,6 +857,18 @@
     router(false);
   }).catch(function (err) {
     console.error(err);
-    document.getElementById('product-grid').textContent = 'Failed to load products.';
+    var g = document.getElementById('product-grid');
+    g.textContent = '';
+    var msg = document.createElement('p');
+    msg.style.cssText = 'text-align:center;padding:24px;grid-column:1/-1';
+    msg.textContent = 'تعذر تحميل المنتجات. تأكد من الاتصال بالإنترنت وحاول مرة أخرى. / Could not load products. Check your connection and try again.';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn';
+    btn.style.cssText = 'display:block;margin:12px auto 0';
+    btn.textContent = 'إعادة المحاولة / Retry';
+    btn.addEventListener('click', function () { location.reload(); });
+    msg.appendChild(btn);
+    g.appendChild(msg);
   });
 })();
