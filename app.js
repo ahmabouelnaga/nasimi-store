@@ -279,16 +279,16 @@
       ? fetchText(CFG.sheetCsvUrl, 8000).then(function (txt) {
           var list = csvToProducts(txt);
           try { localStorage.setItem(CACHE_KEY, txt); } catch (e) {}
-          return list;
+          return { list: list, txt: txt };
         })
       : Promise.reject(new Error('no sheet'));
     return sheet.catch(function () {
       var cached = null;
       try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
       if (cached) {
-        try { return csvToProducts(cached); } catch (e) {}
+        try { return { list: csvToProducts(cached), txt: cached }; } catch (e) {}
       }
-      return fetchText(FALLBACK_CSV, 10000).then(csvToProducts);
+      return fetchText(FALLBACK_CSV, 10000).then(function (txt) { return { list: csvToProducts(txt), txt: txt }; });
     });
   }
 
@@ -849,14 +849,29 @@
 
   applyLang();
   renderCartCount();
-  loadProducts().then(function (products) {
+
+  function showProducts(products, first) {
     state.products = products;
     renderAll();
     renderBest();
     renderBrands();
     router(false);
+  }
+
+  // Show the last good catalog from this browser instantly, then refresh from the Sheet.
+  var shown = false, shownTxt = null;
+  try { shownTxt = localStorage.getItem(CACHE_KEY); } catch (e) {}
+  if (shownTxt) {
+    try { showProducts(csvToProducts(shownTxt), true); shown = true; } catch (e) { shownTxt = null; }
+  }
+
+  loadProducts().then(function (res) {
+    if (shown && res.txt === shownTxt) return;
+    showProducts(res.list, !shown);
+    shown = true;
   }).catch(function (err) {
     console.error(err);
+    if (shown) return;
     var g = document.getElementById('product-grid');
     g.textContent = '';
     var msg = document.createElement('p');
