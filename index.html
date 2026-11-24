@@ -55,6 +55,7 @@
     <a href="#catalog" data-cat="lenses" data-i18n="navLenses"></a>
     <a href="#catalog" data-cat="solutions" data-i18n="navSolutions"></a>
     <a href="#catalog" data-cat="accessories" data-i18n="navAccessories"></a>
+    <a href="#brands" data-i18n="navBrands"></a>
     <a href="#about" data-i18n="navAbout"></a>
     <a href="#contact" data-i18n="navContact"></a>
   </nav>
@@ -100,6 +101,13 @@
   <div id="best-grid" class="product-grid best-grid"></div>
 </section>
 
+<section class="brands container" id="brands">
+  <div class="section-head">
+    <h2 data-i18n="brandsTitle"></h2>
+  </div>
+  <div id="brands-grid" class="brands-grid"></div>
+</section>
+
 <main class="container" id="catalog">
   <h2 class="catalog-title" data-i18n="catalogTitle"></h2>
   <nav class="cat-tabs" id="cat-tabs"></nav>
@@ -112,6 +120,25 @@
   <p id="result-count" class="result-count"></p>
   <div id="product-grid" class="product-grid"></div>
 </main>
+
+<section class="container hidden" id="brand-page">
+  <nav class="breadcrumb">
+    <a href="#" id="brand-back" data-i18n="backHome"></a>
+    <span class="bc-sep">/</span>
+    <a href="#brands" id="brand-bc-brands" data-i18n="navBrands"></a>
+    <span class="bc-sep">/</span>
+    <span id="brand-bc-name"></span>
+  </nav>
+  <div class="brand-page-head">
+    <span id="brand-page-letter" class="brand-page-letter"></span>
+    <div>
+      <h2 id="brand-page-title"></h2>
+      <p id="brand-page-count" class="brand-page-count"></p>
+    </div>
+  </div>
+  <nav class="cat-tabs brand-cat-tabs" id="brand-cat-tabs"></nav>
+  <div id="brand-grid" class="product-grid"></div>
+</section>
 
 <section class="trust">
   <div class="container trust-inner">
