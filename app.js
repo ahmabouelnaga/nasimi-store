@@ -307,10 +307,14 @@
     return p.category === cat;
   }
 
-  function sphValues() {
+  // Per-brand sphere range: [maxPlus, maxMinus]. Default +6.00 to -10.00.
+  var SPH_RANGE = { 'MYLENS': [0, 8] };
+  function sphRange(brand) { return SPH_RANGE[brand] || [6, 10]; }
+  function sphValues(brand) {
+    var rg = sphRange(brand);
     var vals = ['0.00'];
-    for (var d = 0.5; d <= 6.001; d += 0.25) vals.push('+' + d.toFixed(2));
-    for (var m = 0.5; m <= 10.001; m += 0.25) vals.push('-' + m.toFixed(2));
+    for (var d = 0.5; d <= rg[0] + 0.001; d += 0.25) vals.push('+' + d.toFixed(2));
+    for (var m = 0.5; m <= rg[1] + 0.001; m += 0.25) vals.push('-' + m.toFixed(2));
     return vals;
   }
   function cylValues() { return ['-0.75', '-1.25', '-1.75', '-2.25']; }
@@ -608,13 +612,13 @@
     picks.slice(0, 4).forEach(function (p) { grid.appendChild(cardEl(p, true)); });
   }
 
-  function eyeSpecBlock(eyeLabel, eyeKey, toric) {
+  function eyeSpecBlock(eyeLabel, eyeKey, toric, brand) {
     var wrap = el('div', 'eye-block');
     wrap.appendChild(el('div', 'eye-label', eyeLabel));
     var fields = el('div', 'eye-fields');
     var sphF = el('div', 'power-field');
     sphF.appendChild(el('label', '', t('sph')));
-    sphF.appendChild(powerSelect('sph-' + eyeKey, sphValues()));
+    sphF.appendChild(powerSelect('sph-' + eyeKey, sphValues(brand)));
     fields.appendChild(sphF);
     if (toric) {
       var cylF = el('div', 'power-field');
@@ -647,8 +651,8 @@
     var qty = 1;
     if (p.power) {
       var specs = el('div', 'eye-specs');
-      specs.appendChild(eyeSpecBlock(t('powerR'), 'r', toric));
-      specs.appendChild(eyeSpecBlock(t('powerL'), 'l', toric));
+      specs.appendChild(eyeSpecBlock(t('powerR'), 'r', toric, p.brand));
+      specs.appendChild(eyeSpecBlock(t('powerL'), 'l', toric, p.brand));
       body.appendChild(specs);
       body.appendChild(err);
     }
@@ -774,6 +778,7 @@
     var toric = /toric/i.test(i.title);
     function eyeOk(s) {
       if (!s || !s.sph) return false;
+      if (sphValues(i.brand).indexOf(String(s.sph)) < 0) return false;
       if (toric && (!s.cyl || s.ax === undefined || s.ax === null || s.ax === '')) return false;
       return true;
     }
