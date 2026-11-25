@@ -20,6 +20,10 @@ window.NASIMI_CONFIG = {
     '10': ['images/bl/sl1d-1.svg', 'images/bl/sl1d-2.svg', 'images/bl/sl1d-3.svg'],
     '11': ['images/bl/sltoric-1.svg', 'images/bl/sltoric-2.svg'],
     '12': ['images/bl/ultratoric-1.svg'],
+    '14': ['images/bl/bio3-1.svg'],
+    '15': ['images/bl/bio6-1.svg'],
+    '16': ['images/bl/bio1d-1.svg'],
+    '17': ['images/bl/biotoric-1.svg'],
     '13': ['images/bl/ultra-1.svg', 'images/bl/ultra-2.svg', 'images/bl/ultra-3.svg']
   },
 
