@@ -228,12 +228,17 @@ window.NS = { C: {}, P: {} };
   }
   function truthy(v) { return v === true || v === 'yes' || v === 'TRUE' || v === 'true' || v === '1'; }
   function normalize(raw, idx) {
+    var imgs = [];
+    ['image', 'image2', 'image3', 'image4', 'image5', 'image6'].forEach(function (k) {
+      String(raw[k] || '').split('|').forEach(function (u) { u = u.trim(); if (u) imgs.push(u); });
+    });
+    if (!imgs.length) imgs = ((CFG.productImages || {})[String(raw.id)] || []).slice();
     return {
       id: raw.id, idx: idx, title: raw.title, brand: raw.brand || 'Other',
       category: raw.category || 'Colored Lenses',
       price: parseFloat(raw.price) || null,
       colors: raw.colors ? raw.colors.split('|').filter(Boolean) : [],
-      duration: raw.duration || '', power: truthy(raw.power), image: raw.image || '',
+      duration: raw.duration || '', power: truthy(raw.power), image: imgs[0] || '', images: imgs,
       stock: raw.stock === undefined || raw.stock === '' ? true : truthy(raw.stock)
     };
   }
